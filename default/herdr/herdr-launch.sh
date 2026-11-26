@@ -9,27 +9,27 @@ set -euo pipefail
 # down the namespace (killing the server).
 
 # Claude only: pick the account (config dir) before the server starts, so every
-# pane in this session inherits CLAUDE_CONFIG_DIR. 'subscription-01' is ~/.claude,
+# pane in this session inherits CLAUDE_CONFIG_DIR. 'default' is ~/.claude,
 # anything else ~/.claude-NAME. --claude-account skips the picker.
 if [ "${AGENTBOX_AGENT:-opencode2}" = claude ]; then
   account="${AGENTBOX_CLAUDE_ACCOUNT:-}"
   if [ -z "$account" ]; then
-    account=subscription-01
+    account=default
     if [ -t 0 ] && [ -t 1 ] && command -v fzf >/dev/null 2>&1; then
-      accounts=(subscription-01 subscription-02)
+      accounts=(default subscription-02)
       for d in "$HOME"/.claude-*/; do
         n="${d%/}"
         n="${n##*/.claude-}"
         case "$n" in
-          shared|subscription-01|subscription-02|""|*[!a-z0-9_-]*) continue ;;
+          shared|default|subscription-02|""|*[!a-z0-9_-]*) continue ;;
         esac
         accounts+=("$n")
       done
-      # Show who each account is logged in as, so a pre-selected "subscription-01"
+      # Show who each account is logged in as, so a pre-selected "default"
       # that is already logged in is not mistaken for a fresh/other account.
       lines=()
       for n in "${accounts[@]}"; do
-        if [ "$n" = subscription-01 ]; then d="$HOME/.claude"; else d="$HOME/.claude-$n"; fi
+        if [ "$n" = default ]; then d="$HOME/.claude"; else d="$HOME/.claude-$n"; fi
         who=
         if [ -s "$d/.credentials.json" ]; then
           who=$(jq -r '.oauthAccount.emailAddress // empty' "$d/.claude.json" 2>/dev/null || true)
@@ -41,11 +41,11 @@ if [ "${AGENTBOX_AGENT:-opencode2}" = claude ]; then
       done
       choice=$(printf '%s\n' "${lines[@]}" \
         | fzf --prompt='Claude account > ' --height=~10 --reverse \
-              --header='Enter = highlighted account (Esc falls back to subscription-01)') || choice=subscription-01
+              --header='Enter = highlighted account (Esc falls back to default)') || choice=default
       account="${choice%% *}"
     fi
   fi
-  if [ "$account" = subscription-01 ]; then
+  if [ "$account" = default ]; then
     claude_dir="$HOME/.claude"
   else
     claude_dir="$HOME/.claude-$account"
