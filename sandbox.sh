@@ -333,7 +333,7 @@ if [ "$DRY_RUN" != true ]; then
 fi
 
 # Multiple Claude Code accounts. 'default' is the existing ~/.claude, every
-# other account lives in ~/.claude-NAME ('subscription-02' always exists). Skills,
+# other account lives in ~/.claude-NAME ('subscription-01' and 'subscription-02' always exist). Skills,
 # commands, agents, plugins, CLAUDE.md and settings.json are shared through
 # symlinks into ~/.claude-shared, as are projects/ (session transcripts, so
 # /resume lists every session regardless of account) and file-history/ (/rewind
@@ -346,7 +346,7 @@ fi
 if [ "$DRY_RUN" != true ]; then
   # The shared dir must exist before the --bind-try list below is built, or
   # the first run leaves the symlinks into it dangling (transcript ENOENT).
-  mkdir -p "$HOME/.claude-subscription-02" "$CLAUDE_SHARED_DIR" "$CLAUDE_CFG_DIR"
+  mkdir -p "$HOME/.claude-subscription-01" "$HOME/.claude-subscription-02" "$CLAUDE_SHARED_DIR" "$CLAUDE_CFG_DIR"
 fi
 
 # Every existing account dir (default first), then the shared dir.
@@ -863,7 +863,7 @@ else
   OPEN_URL=false
 fi
 
-# Per-account launchers inside the sandbox: claude-default, claude-subscription-02 and
+# Per-account launchers inside the sandbox: claude-default, claude-subscription-01, claude-subscription-02 and
 # claude-NAME for every other account dir, all the same script that picks the
 # account from its own name. PATH gets /run/agentbox/bin unconditionally (the
 # open-url proxy's xdg-open lives there too).

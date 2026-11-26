@@ -46,14 +46,14 @@ Defined in `sandbox.sh`:
 
 ## Claude accounts
 
-With `--agent claude`, an fzf picker in the Herdr launcher chooses the account before the session starts (`default` first, then `subscription-02`, then any other `~/.claude-*` dir). Esc or a non-terminal falls back to `default`; `--claude-account NAME` skips the picker. The choice is exported as `CLAUDE_CONFIG_DIR` before Herdr starts, so every pane in the session uses that account. A new account is created by starting once with `--claude-account NAME`, then `/login`.
+With `--agent claude`, an fzf picker in the Herdr launcher chooses the account before the session starts (`default` first, then `subscription-01`, `subscription-02`, then any other `~/.claude-*` dir). Esc or a non-terminal falls back to `default`; `--claude-account NAME` skips the picker. The choice is exported as `CLAUDE_CONFIG_DIR` before Herdr starts, so every pane in the session uses that account. A new account is created by starting once with `--claude-account NAME`, then `/login`.
 
 | Account | Config dir |
 |---------|------------|
 | `default` | `~/.claude` (the existing dir, stays logged in) |
-| `subscription-02`, `NAME` | `~/.claude-subscription-02`, `~/.claude-NAME` |
+| `subscription-01`, `subscription-02`, `NAME` | `~/.claude-subscription-01`, `~/.claude-subscription-02`, `~/.claude-NAME` |
 
-Inside the sandbox, `claude-default`, `claude-subscription-02` and `claude-NAME` (one per existing `~/.claude-NAME`) start Claude Code directly with that account, in any pane or tab, regardless of the picker choice. They live in `/run/agentbox/bin` (always on `PATH`) and are all `default/claude/claude-account.sh`, which derives the account from its own name. The picker lists each account with the email it is logged in as (or `not logged in`).
+Inside the sandbox, `claude-default`, `claude-subscription-01`, `claude-subscription-02` and `claude-NAME` (one per existing `~/.claude-NAME`) start Claude Code directly with that account, in any pane or tab, regardless of the picker choice. They live in `/run/agentbox/bin` (always on `PATH`) and are all `default/claude/claude-account.sh`, which derives the account from its own name. The picker lists each account with the email it is logged in as (or `not logged in`).
 
 `~/.claude-shared` holds what every account shares. On each start `sandbox.sh` creates it (with `skills/ commands/ agents/ plugins/ projects/ file-history/ CLAUDE.md settings.json`) and symlinks those items into every account dir. Existing real content in an account is first merged into the shared dir without overwriting and the original kept as `<item>.bak.<timestamp>`. Because Claude rewrites files via temp+rename, a regular file that replaced a symlink is folded back into the shared copy at the next start. `projects/` and `file-history/` are shared too, so `/resume` and `/rewind` see every session from every account. Credentials and `.claude.json` stay per account.
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Start Claude Code with a specific account, bound into the sandbox as
-# claude-default, claude-subscription-02 and claude-<name> (one per ~/.claude-<name>).
+# claude-default, claude-subscription-01, claude-subscription-02 and claude-<name> (one per ~/.claude-<name>).
 # The account is taken from the name this file is invoked as, so it works the
 # same in any pane, tab or shell regardless of the session's picker choice.
 #   claude-subscription-02 [claude args...]      -> CLAUDE_CONFIG_DIR=~/.claude-subscription-02

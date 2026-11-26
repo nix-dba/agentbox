@@ -16,12 +16,12 @@ if [ "${AGENTBOX_AGENT:-opencode2}" = claude ]; then
   if [ -z "$account" ]; then
     account=default
     if [ -t 0 ] && [ -t 1 ] && command -v fzf >/dev/null 2>&1; then
-      accounts=(default subscription-02)
+      accounts=(default subscription-01 subscription-02)
       for d in "$HOME"/.claude-*/; do
         n="${d%/}"
         n="${n##*/.claude-}"
         case "$n" in
-          shared|default|subscription-02|""|*[!a-z0-9_-]*) continue ;;
+          shared|default|subscription-01|subscription-02|""|*[!a-z0-9_-]*) continue ;;
         esac
         accounts+=("$n")
       done
