@@ -27,7 +27,7 @@ Defined in `sandbox.sh`:
 | Flag | Description |
 |------|-------------|
 | `--agent NAME` | Agent TUI auto-launched in the Herdr session: `opencode2`, `claude`, `codex`, `pi`, or `shell` (plain bash root pane). Skips the harness menu; ignored when an explicit command is given |
-| `--claude-account NAME` | Claude Code account: `personal` (`~/.claude`) or `NAME` (`~/.claude-NAME`, created if missing). Skips the fzf account picker; see [Claude accounts](#claude-accounts) |
+| `--claude-account NAME` | Claude Code account: `subscription-01` (`~/.claude`) or `NAME` (`~/.claude-NAME`, created if missing). Skips the fzf account picker; see [Claude accounts](#claude-accounts) |
 | `--no-git-init` | Skip git repository initialization prompt |
 | `--verbose`, `-v` | Print the full bwrap command before execution |
 | `--dry-run` | Print the full bwrap command and exit without starting the sandbox. Skips host changes (status line deployment, `~/.claude.json` import, git init, host directory creation) and the `$HOME` confirmation prompt |
@@ -46,18 +46,18 @@ Defined in `sandbox.sh`:
 
 ## Claude accounts
 
-With `--agent claude`, an fzf picker in the Herdr launcher chooses the account before the session starts (`personal` first, then `work`, then any other `~/.claude-*` dir). Esc or a non-terminal falls back to `personal`; `--claude-account NAME` skips the picker. The choice is exported as `CLAUDE_CONFIG_DIR` before Herdr starts, so every pane in the session uses that account. A new account is created by starting once with `--claude-account NAME`, then `/login`.
+With `--agent claude`, an fzf picker in the Herdr launcher chooses the account before the session starts (`subscription-01` first, then `subscription-02`, then any other `~/.claude-*` dir). Esc or a non-terminal falls back to `subscription-01`; `--claude-account NAME` skips the picker. The choice is exported as `CLAUDE_CONFIG_DIR` before Herdr starts, so every pane in the session uses that account. A new account is created by starting once with `--claude-account NAME`, then `/login`.
 
 | Account | Config dir |
 |---------|------------|
-| `personal` | `~/.claude` (the existing dir, stays logged in) |
-| `work`, `NAME` | `~/.claude-work`, `~/.claude-NAME` |
+| `subscription-01` | `~/.claude` (the existing dir, stays logged in) |
+| `subscription-02`, `NAME` | `~/.claude-subscription-02`, `~/.claude-NAME` |
 
-Inside the sandbox, `claude-personal`, `claude-work` and `claude-NAME` (one per existing `~/.claude-NAME`) start Claude Code directly with that account, in any pane or tab, regardless of the picker choice. They live in `/run/agentbox/bin` (always on `PATH`) and are all `default/claude/claude-account.sh`, which derives the account from its own name. The picker lists each account with the email it is logged in as (or `not logged in`).
+Inside the sandbox, `claude-subscription-01`, `claude-subscription-02` and `claude-NAME` (one per existing `~/.claude-NAME`) start Claude Code directly with that account, in any pane or tab, regardless of the picker choice. They live in `/run/agentbox/bin` (always on `PATH`) and are all `default/claude/claude-account.sh`, which derives the account from its own name. The picker lists each account with the email it is logged in as (or `not logged in`).
 
 `~/.claude-shared` holds what every account shares. On each start `sandbox.sh` creates it (with `skills/ commands/ agents/ plugins/ projects/ file-history/ CLAUDE.md settings.json`) and symlinks those items into every account dir. Existing real content in an account is first merged into the shared dir without overwriting and the original kept as `<item>.bak.<timestamp>`. Because Claude rewrites files via temp+rename, a regular file that replaced a symlink is folded back into the shared copy at the next start. `projects/` and `file-history/` are shared too, so `/resume` and `/rewind` see every session from every account. Credentials and `.claude.json` stay per account.
 
-MCP servers: `~/.claude-shared/mcp.json` (`{"mcpServers": {...}}`, seeded once from the personal account) is merged into each account's `.claude.json` on start; shared entries win on name clashes. Servers added with `claude mcp add` stay local to that account unless also put in `mcp.json`.
+MCP servers: `~/.claude-shared/mcp.json` (`{"mcpServers": {...}}`, seeded once from the subscription-01 account) is merged into each account's `.claude.json` on start; shared entries win on name clashes. Servers added with `claude mcp add` stay local to that account unless also put in `mcp.json`.
 
 All account dirs are bound read-write in every session, so a session can read the other accounts' credentials.
 

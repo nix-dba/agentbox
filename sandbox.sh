@@ -155,7 +155,7 @@ Options:
   --docker                  Bind the host Docker socket (grants root-equivalent host access)
   --agent NAME              Agent TUI to launch in the Herdr session: opencode2, claude,
                             codex, pi, or shell (plain bash). Skips the selection menu
-  --claude-account NAME     Claude Code account to use ('personal' = ~/.claude, otherwise
+  --claude-account NAME     Claude Code account to use ('subscription-01' = ~/.claude, otherwise
                             ~/.claude-NAME, created if missing); skips the account picker
   --with-NAME               Enable the optional feature overlay NAME (can be repeated)
   -w, --workspace PATH      Bind additional workspace directory (can be repeated)
@@ -332,31 +332,31 @@ if [ "$DRY_RUN" != true ]; then
   fi
 fi
 
-# Multiple Claude Code accounts. 'personal' is the existing ~/.claude, every
-# other account lives in ~/.claude-NAME ('work' always exists). Skills,
+# Multiple Claude Code accounts. 'subscription-01' is the existing ~/.claude, every
+# other account lives in ~/.claude-NAME ('subscription-02' always exists). Skills,
 # commands, agents, plugins, CLAUDE.md and settings.json are shared through
 # symlinks into ~/.claude-shared, as are projects/ (session transcripts, so
 # /resume lists every session regardless of account) and file-history/ (/rewind
 # snapshots, keyed by session id). Credentials and .claude.json stay per account.
 CLAUDE_SHARED_DIR="$HOME/.claude-shared"
 CLAUDE_SHARED_ITEMS=(skills commands agents plugins projects file-history CLAUDE.md settings.json)
-if [ -n "$CLAUDE_ACCOUNT" ] && [ "$CLAUDE_ACCOUNT" != personal ]; then
+if [ -n "$CLAUDE_ACCOUNT" ] && [ "$CLAUDE_ACCOUNT" != subscription-01 ]; then
   CLAUDE_CFG_DIR="$HOME/.claude-$CLAUDE_ACCOUNT"
 fi
 if [ "$DRY_RUN" != true ]; then
   # The shared dir must exist before the --bind-try list below is built, or
   # the first run leaves the symlinks into it dangling (transcript ENOENT).
-  mkdir -p "$HOME/.claude-work" "$CLAUDE_SHARED_DIR" "$CLAUDE_CFG_DIR"
+  mkdir -p "$HOME/.claude-subscription-02" "$CLAUDE_SHARED_DIR" "$CLAUDE_CFG_DIR"
 fi
 
-# Every existing account dir (personal first), then the shared dir.
+# Every existing account dir (subscription-01 first), then the shared dir.
 CLAUDE_ACCOUNT_DIRS=("$HOME/.claude")
 for _d in "$HOME"/.claude-*/; do
   _d="${_d%/}"
   _n="${_d##*/.claude-}"
   [ -d "$_d" ] || continue
   case "$_n" in
-    shared|personal|""|*[!a-z0-9_-]*) continue ;;
+    shared|subscription-01|""|*[!a-z0-9_-]*) continue ;;
   esac
   CLAUDE_ACCOUNT_DIRS+=("$_d")
 done
@@ -434,7 +434,7 @@ reconcile_claude_shared() {
     esac
   done
 
-  # Seed shared MCP servers from the personal account once.
+  # Seed shared MCP servers from the subscription-01 account once.
   if [ ! -f "$CLAUDE_SHARED_DIR/mcp.json" ] && [ -f "$HOME/.claude/.claude.json" ]; then
     jq '{mcpServers: (.mcpServers // {})}' "$HOME/.claude/.claude.json" \
       > "$CLAUDE_SHARED_DIR/mcp.json" 2>/dev/null \
@@ -863,14 +863,14 @@ else
   OPEN_URL=false
 fi
 
-# Per-account launchers inside the sandbox: claude-personal, claude-work and
+# Per-account launchers inside the sandbox: claude-subscription-01, claude-subscription-02 and
 # claude-NAME for every other account dir, all the same script that picks the
 # account from its own name. PATH gets /run/agentbox/bin unconditionally (the
 # open-url proxy's xdg-open lives there too).
 CLAUDE_ACCOUNT_BIN_ARGS=()
 _claude_launcher="${CLAUDE_ACCOUNT_LAUNCHER:-$SCRIPT_DIR/default/claude/claude-account.sh}"
 if [ -f "$_claude_launcher" ]; then
-  _claude_names=(personal)
+  _claude_names=(subscription-01)
   for _d in "${CLAUDE_ACCOUNT_DIRS[@]}"; do
     [ "$_d" = "$HOME/.claude" ] && continue
     _claude_names+=("${_d##*/.claude-}")

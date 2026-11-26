@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # Start Claude Code with a specific account, bound into the sandbox as
-# claude-personal, claude-work and claude-<name> (one per ~/.claude-<name>).
+# claude-subscription-01, claude-subscription-02 and claude-<name> (one per ~/.claude-<name>).
 # The account is taken from the name this file is invoked as, so it works the
 # same in any pane, tab or shell regardless of the session's picker choice.
-#   claude-work [claude args...]      -> CLAUDE_CONFIG_DIR=~/.claude-work
-#   claude-personal [claude args...]  -> CLAUDE_CONFIG_DIR=~/.claude
+#   claude-subscription-02 [claude args...]      -> CLAUDE_CONFIG_DIR=~/.claude-subscription-02
+#   claude-subscription-01 [claude args...]  -> CLAUDE_CONFIG_DIR=~/.claude
 
 set -euo pipefail
 
@@ -12,7 +12,7 @@ account="$(basename "$0")"
 account="${account#claude-}"
 
 case "$account" in
-  personal) dir="$HOME/.claude" ;;
+  subscription-01) dir="$HOME/.claude" ;;
   *[!a-z0-9_-]* | "" | shared) echo "claude-account: invalid account '$account'" >&2; exit 1 ;;
   *) dir="$HOME/.claude-$account" ;;
 esac
