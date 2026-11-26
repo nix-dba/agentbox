@@ -66,6 +66,7 @@
         gitui
         curl
         gh
+        tea
         wl-clipboard
         uv
         podman

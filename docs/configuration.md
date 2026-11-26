@@ -98,7 +98,7 @@ Code review TUI settings:
 File: `flake.nix`
 
 Flake outputs:
-- `devShells.default` -- shell with all dependencies (bash, bubblewrap, bun, opencode2 (logo blanked), tuicr, herdr, jq, fzf, git, gitui, curl, gh, wl-clipboard, uv, claude-code, codex, pi, multica, python3 with pyyaml)
+- `devShells.default` -- shell with all dependencies (bash, bubblewrap, bun, opencode2 (logo blanked), tuicr, herdr, jq, fzf, git, gitui, curl, gh, tea (Gitea CLI), wl-clipboard, uv, claude-code, codex, pi, multica, python3 with pyyaml)
 - `apps.default` -- run the `sandbox` script
 - `packages.default` -- the built sandbox wrapper
 - `packages.omniroute-plugin-v2` -- the built OmniRoute opencode v2 plugin
